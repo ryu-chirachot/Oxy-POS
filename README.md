@@ -1,6 +1,6 @@
 # OXYFINE POS (React + Vite + Tailwind + Zustand)
 
-Dark-themed POS prototype for **OXYFINE My&Bar Meat More (Khon Kaen)**.
+Dark-themed POS prototype for **OXYFINE Meat & More (Khon Kaen)**.
 
 ## Features
 - New Order (cart, quantity, payment modal)
