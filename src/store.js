@@ -9,12 +9,59 @@ const sampleItems = [
 ]
 
 export const usePOSStore = create((set, get) => ({
+  // Product & Cart
   items: sampleItems,
   filter: 'All',
   cart: [],
   ordersToday: 0,
   revenueToday: 0,
 
+  // Store Information
+  storeInfo: {
+    name: 'OXYFINE Meat & More',
+    address: '123 kku, Khonkaen 40000',
+    phone: '02-123-4567',
+    email: 'info@oxyfine.com',
+    taxId: '0123456789012'
+  },
+
+  // Users Management
+  users: [
+    { id: 'u1', name: 'John Manager', role: 'Manager', pin: '1234', active: true },
+    { id: 'u2', name: 'Sarah Cashier', role: 'Cashier', pin: '5678', active: true },
+    { id: 'u3', name: 'Mike Admin', role: 'Admin', pin: '9999', active: false },
+  ],
+
+  // Categories
+  categories: [
+    { id: 'c1', name: 'Beef', itemCount: 2 },
+    { id: 'c2', name: 'Pork', itemCount: 1 },
+    { id: 'c3', name: 'Drink', itemCount: 1 },
+    { id: 'c4', name: 'Dessert', itemCount: 1 },
+  ],
+
+  // Tax Settings
+  taxSettings: {
+    vatEnabled: true,
+    vatRate: 7,
+    serviceChargeEnabled: false,
+    serviceChargeRate: 10,
+    quickDiscounts: [
+      { name: 'Member 10%', percent: 10 },
+      { name: 'Senior 15%', percent: 15 },
+      { name: 'Staff 20%', percent: 20 },
+    ]
+  },
+
+  // Receipt Settings
+  receiptSettings: {
+    headerText: 'Welcome to OXYFINE\nPremium Meat & More',
+    footerText: 'Thank you for your business!\nPlease come again',
+    showLogo: true,
+    showQRCode: true,
+  },
+
+  // === Product & Cart Actions ===
   setFilter: (f) => set({ filter: f }),
 
   addToCart: (item) => {
@@ -36,7 +83,6 @@ export const usePOSStore = create((set, get) => ({
 
   confirmPayment: (method='cash') => {
     const total = get().cart.reduce((s, c) => s + c.price * c.qty, 0)
-    // reduce stock
     const items = get().items.map(i => {
       const inCart = get().cart.find(c => c.id === i.id)
       if (!inCart) return i
@@ -59,5 +105,46 @@ export const usePOSStore = create((set, get) => ({
 
   addProduct: (prod) => {
     set({ items: [...get().items, { ...prod, id: crypto.randomUUID() }] })
-  }
+  },
+
+  // === Store Info Actions ===
+  updateStoreInfo: (info) => set({ storeInfo: info }),
+
+  // === Users Actions ===
+  addUser: (user) => {
+    set({ users: [...get().users, { ...user, id: crypto.randomUUID() }] })
+  },
+
+  removeUser: (id) => {
+    set({ users: get().users.filter(u => u.id !== id) })
+  },
+
+  updateUser: (id, updates) => {
+    set({
+      users: get().users.map(u => u.id === id ? { ...u, ...updates } : u)
+    })
+  },
+
+  // === Categories Actions ===
+  addCategory: (name) => {
+    set({
+      categories: [...get().categories, { id: crypto.randomUUID(), name, itemCount: 0 }]
+    })
+  },
+
+  removeCategory: (id) => {
+    set({ categories: get().categories.filter(c => c.id !== id) })
+  },
+
+  updateCategory: (id, name) => {
+    set({
+      categories: get().categories.map(c => c.id === id ? { ...c, name } : c)
+    })
+  },
+
+  // === Tax Settings Actions ===
+  updateTaxSettings: (settings) => set({ taxSettings: settings }),
+
+  // === Receipt Settings Actions ===
+  updateReceiptSettings: (settings) => set({ receiptSettings: settings }),
 }))
