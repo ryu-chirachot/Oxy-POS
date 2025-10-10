@@ -1,0 +1,31 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+body {
+  @apply bg-oxy-bg text-oxy-text;
+}
+
+.card {
+  @apply bg-oxy-card rounded-xl2 shadow-glow border border-neutral-800;
+}
+
+.btn {
+  @apply px-4 py-2 rounded-xl2 border border-neutral-700 bg-neutral-900 hover:bg-neutral-800 active:scale-[0.98] transition;
+}
+
+.btn-primary {
+  @apply btn border-oxy-red text-white hover:bg-oxy-red/20;
+}
+
+.btn-gold {
+  @apply btn border-oxy-gold text-oxy-gold hover:bg-oxy-gold/10;
+}
+
+.input {
+  @apply bg-neutral-900 border border-neutral-700 rounded-xl2 px-3 py-2 outline-none focus:border-oxy-gold;
+}
