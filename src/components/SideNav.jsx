@@ -18,6 +18,7 @@ export default function SideNav() {
       <Item to="/order" label="🛒 New Order" />
       <Item to="/stock" label="📦 Manage Stock" />
       <Item to="/sales" label="💰 Sales Summary" />
+      <Item to="/reservations" label="🍽️ Table Reservations" />
       <Item to="/settings" label="⚙️ Settings" />
     </aside>
   )

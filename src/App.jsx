@@ -7,6 +7,7 @@ import NewOrder from './pages/NewOrder'
 import ManageStock from './pages/ManageStock'
 import SalesSummary from './pages/SalesSummary'
 import Settings from './pages/Settings'
+import AdminReservations from './pages/AdminReservations'
 
 export default function App() {
   return (
@@ -21,6 +22,7 @@ export default function App() {
             <Route path="/stock" element={<ManageStock />} />
             <Route path="/sales" element={<SalesSummary />} />
             <Route path="/settings" element={<Settings />} />
+            <Route path="/reservations" element={<AdminReservations />} />
           </Routes>
         </main>
       </div>
