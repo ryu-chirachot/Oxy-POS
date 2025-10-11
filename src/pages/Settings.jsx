@@ -1,5 +1,7 @@
 import React, { useState } from 'react'
 import { usePOSStore } from '../store'
+import logo from "../assets/logo.jpg";
+
 
 export default function Settings() {
   const [tab, setTab] = useState('Store')
@@ -353,7 +355,11 @@ function ReceiptTab() {
         
         <div className="bg-white border-2 border-slate-300 rounded-xl p-6 shadow-lg">
           <div className="text-center space-y-2 text-slate-900">
-            {form.showLogo && <div className="text-5xl">🥩</div>}
+            {form.showLogo && (
+              <div className="text-5xl">
+                <img src={logo} alt="Logo" className="w-24 h-24 object-contain" />
+              </div>
+            )}
             <div className="font-bold text-lg">OXYFINE Meat & More</div>
             <div className="text-xs whitespace-pre-line">{form.headerText}</div>
             <div className="border-t-2 border-dashed border-slate-300 my-3"></div>
