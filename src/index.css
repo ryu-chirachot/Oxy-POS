@@ -3,29 +3,54 @@
 @tailwind utilities;
 
 :root {
-  color-scheme: dark;
+  color-scheme: light;
 }
 
 body {
-  @apply bg-oxy-bg text-oxy-text;
+  @apply bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 text-slate-900;
 }
 
 .card {
-  @apply bg-oxy-card rounded-xl2 shadow-glow border border-neutral-800;
+  @apply bg-white rounded-2xl shadow-lg border border-slate-200 hover:shadow-xl transition-shadow;
 }
 
 .btn {
-  @apply px-4 py-2 rounded-xl2 border border-neutral-700 bg-neutral-900 hover:bg-neutral-800 active:scale-[0.98] transition;
+  @apply px-4 py-2 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 active:scale-[0.98] transition font-medium text-slate-700 hover:border-slate-400;
 }
 
 .btn-primary {
-  @apply btn border-oxy-red text-white hover:bg-oxy-red/20;
+  @apply btn border-red-500 bg-red-500 text-white hover:bg-red-600 hover:border-red-600 shadow-md;
 }
 
 .btn-gold {
-  @apply btn border-oxy-gold text-oxy-gold hover:bg-oxy-gold/10;
+  @apply btn border-amber-500 bg-amber-500 text-white hover:bg-amber-600 hover:border-amber-600 shadow-md;
 }
 
 .input {
-  @apply bg-neutral-900 border border-neutral-700 rounded-xl2 px-3 py-2 outline-none focus:border-oxy-gold;
+  @apply bg-white border border-slate-300 rounded-xl px-3 py-2 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition;
+}
+
+/* Custom colors for OXYFINE brand */
+.text-oxy-gold {
+  @apply text-amber-600;
+}
+
+.text-oxy-red {
+  @apply text-red-600;
+}
+
+.border-oxy-gold {
+  @apply border-amber-500;
+}
+
+.border-oxy-red {
+  @apply border-red-500;
+}
+
+.bg-oxy-gold {
+  @apply bg-amber-500;
+}
+
+.bg-oxy-red {
+  @apply bg-red-500;
 }

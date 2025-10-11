@@ -19,18 +19,11 @@ export const usePOSStore = create((set, get) => ({
   // Store Information
   storeInfo: {
     name: 'OXYFINE Meat & More',
-    address: '123 kku, Khonkaen 40000',
+    address: '123 Sukhumvit Road, Bangkok 10110',
     phone: '02-123-4567',
     email: 'info@oxyfine.com',
     taxId: '0123456789012'
   },
-
-  // Users Management
-  users: [
-    { id: 'u1', name: 'John Manager', role: 'Manager', pin: '1234', active: true },
-    { id: 'u2', name: 'Sarah Cashier', role: 'Cashier', pin: '5678', active: true },
-    { id: 'u3', name: 'Mike Admin', role: 'Admin', pin: '9999', active: false },
-  ],
 
   // Categories
   categories: [
@@ -109,21 +102,6 @@ export const usePOSStore = create((set, get) => ({
 
   // === Store Info Actions ===
   updateStoreInfo: (info) => set({ storeInfo: info }),
-
-  // === Users Actions ===
-  addUser: (user) => {
-    set({ users: [...get().users, { ...user, id: crypto.randomUUID() }] })
-  },
-
-  removeUser: (id) => {
-    set({ users: get().users.filter(u => u.id !== id) })
-  },
-
-  updateUser: (id, updates) => {
-    set({
-      users: get().users.map(u => u.id === id ? { ...u, ...updates } : u)
-    })
-  },
 
   // === Categories Actions ===
   addCategory: (name) => {

@@ -14,7 +14,7 @@ export default function App() {
       <NavBar />
       <div className="flex">
         <SideNav />
-        <main className="flex-1 p-2">
+        <main className="flex-1 p-0 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/order" element={<NewOrder />} />
