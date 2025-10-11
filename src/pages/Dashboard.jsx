@@ -34,13 +34,13 @@ export default function Dashboard() {
         <div className="card p-6">
           <div className="font-semibold text-lg mb-4 text-slate-800">⚡ Quick Actions</div>
           <div className="flex flex-wrap gap-3">
-            <a href="#/order" className="btn-primary flex items-center gap-2">
+            <a href="/order" className="btn-primary flex items-center gap-2">
               🛒 New Order
             </a>
-            <a href="#/stock" className="btn-gold flex items-center gap-2">
+            <a href="/stock" className="btn-gold flex items-center gap-2">
               📦 Manage Stock
             </a>
-            <a href="#/sales" className="btn flex items-center gap-2">
+            <a href="/sales" className="btn flex items-center gap-2">
               💰 View Sales
             </a>
           </div>
