@@ -23,7 +23,7 @@ export default function App() {
             <Route path="/stock" element={<ManageStock />} />
             <Route path="/sales" element={<SalesSummary />} />
             <Route path="/settings" element={<Settings />} />
-            <Route path="/reservations" element={<AdminReservations />} />>
+            <Route path="/reservations" element={<AdminReservations />} />
               <Route path="/ai-analytics" element={<AIAnalytics />} />
           </Routes>
         </main>
