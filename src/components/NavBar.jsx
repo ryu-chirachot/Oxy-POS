@@ -1,5 +1,6 @@
 import React from 'react'
 import { Link, useLocation } from 'react-router-dom'
+import logo from '../assets/logo.jpg'
 
 const Tab = ({ to, label }) => {
   const { pathname } = useLocation()
@@ -16,9 +17,12 @@ export default function NavBar() {
   return (
     <div className="w-full flex items-center justify-between px-6 py-4 border-b border-slate-200 bg-white/80 backdrop-blur-md sticky top-0 z-10 shadow-sm">
       <div className="flex items-center gap-3">
-        <div className="text-amber-600 text-2xl font-bold flex items-center gap-2">
-          🥩 OXYFINE Meat & More
-        </div>
+        <Link to="/" className="hover:opacity-80 transition">
+          <img src={logo} alt="OXYFINE Logo" className="w-10 h-10 object-contain rounded-lg cursor-pointer" />
+        </Link>
+        <Link to="/" className="text-amber-600 text-2xl font-bold hover:text-amber-700 transition">
+          OXYFINE Meat & More
+        </Link>
         <div className="text-slate-500 text-sm hidden md:block"> • POS by Yotmanut</div>
       </div>
       <div className="text-slate-600 text-sm hidden md:block">{time}</div>

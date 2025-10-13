@@ -1,11 +1,46 @@
 import React from 'react'
 import { usePOSStore } from '../store'
+import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 
 export default function SalesSummary() {
-  const { ordersToday, revenueToday, items } = usePOSStore()
+  const { ordersToday, revenueToday, items, salesHistory } = usePOSStore()
   const top = [...items].sort((a,b)=>b.stock-a.stock)[0]
   const lowStock = items.filter(i => i.stock <= 5 && i.stock > 0)
   const outOfStock = items.filter(i => i.stock === 0)
+  
+  // Prepare data for charts
+  const salesTrendData = salesHistory || [
+    { day: 'Mon', sales: 4200 },
+    { day: 'Tue', sales: 5800 },
+    { day: 'Wed', sales: 3900 },
+    { day: 'Thu', sales: 6500 },
+    { day: 'Fri', sales: 7200 },
+    { day: 'Sat', sales: 9100 },
+    { day: 'Sun', sales: 8400 },
+  ]
+  
+  // Category distribution
+  const categoryData = Array.from(
+    items.reduce((acc, item) => {
+      const cat = item.category
+      if (!acc.has(cat)) {
+        acc.set(cat, { name: cat, value: 0 })
+      }
+      acc.get(cat).value += item.stock * item.price
+      return acc
+    }, new Map()).values()
+  )
+  
+  // Top products by stock value
+  const topProductsData = [...items]
+    .sort((a, b) => (b.stock * b.price) - (a.stock * a.price))
+    .slice(0, 5)
+    .map(item => ({
+      name: item.name.length > 20 ? item.name.substring(0, 20) + '...' : item.name,
+      value: item.stock * item.price
+    }))
+  
+  const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899']
   
   return (
     <div className="p-6">
@@ -49,7 +84,7 @@ export default function SalesSummary() {
       <div className="grid gap-4 md:grid-cols-2 mb-6">
         <div className="card p-6">
           <h3 className="font-bold text-lg mb-4 text-slate-800">⚠️ Low Stock Items</h3>
-          <div className="space-y-2">
+          <div className="space-y-2 max-h-64 overflow-y-auto">
             {lowStock.length === 0 ? (
               <div className="text-slate-400 text-sm text-center py-4 bg-slate-50 rounded-xl">
                 All items well stocked! 🎉
@@ -73,7 +108,7 @@ export default function SalesSummary() {
         
         <div className="card p-6">
           <h3 className="font-bold text-lg mb-4 text-slate-800">❌ Out of Stock</h3>
-          <div className="space-y-2">
+          <div className="space-y-2 max-h-64 overflow-y-auto">
             {outOfStock.length === 0 ? (
               <div className="text-slate-400 text-sm text-center py-4 bg-slate-50 rounded-xl">
                 No items out of stock! ✅
@@ -96,31 +131,69 @@ export default function SalesSummary() {
         </div>
       </div>
 
-      <div className="card p-6">
-        <div className="font-bold text-lg mb-4 text-slate-800">📊 Analytics Charts</div>
-        <div className="text-sm text-slate-500 mb-4">You can integrate chart libraries (e.g., Recharts) for detailed analytics.</div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="h-48 bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl border-2 border-blue-200 flex items-center justify-center">
-            <div className="text-center">
-              <div className="text-4xl mb-2">📈</div>
-              <div className="font-semibold text-blue-700">Line Chart</div>
-              <div className="text-xs text-blue-600 mt-1">Sales Trend</div>
-            </div>
-          </div>
-          <div className="h-48 bg-gradient-to-br from-green-50 to-green-100 rounded-2xl border-2 border-green-200 flex items-center justify-center">
-            <div className="text-center">
-              <div className="text-4xl mb-2">🥧</div>
-              <div className="font-semibold text-green-700">Pie Chart</div>
-              <div className="text-xs text-green-600 mt-1">Category Distribution</div>
-            </div>
-          </div>
-          <div className="h-48 bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl border-2 border-purple-200 flex items-center justify-center">
-            <div className="text-center">
-              <div className="text-4xl mb-2">📊</div>
-              <div className="font-semibold text-purple-700">Bar Chart</div>
-              <div className="text-xs text-purple-600 mt-1">Top Products</div>
-            </div>
-          </div>
+      <div className="card p-6 mb-6">
+        <div className="font-bold text-lg mb-4 text-slate-800">📈 Sales Trend (Last 7 Days)</div>
+        <ResponsiveContainer width="100%" height={300}>
+          <LineChart data={salesTrendData}>
+            <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+            <XAxis dataKey="day" stroke="#64748b" />
+            <YAxis stroke="#64748b" />
+            <Tooltip 
+              contentStyle={{ backgroundColor: '#fff', border: '1px solid #e2e8f0', borderRadius: '8px' }}
+              formatter={(value) => `฿${value.toLocaleString()}`}
+            />
+            <Legend />
+            <Line 
+              type="monotone" 
+              dataKey="sales" 
+              stroke="#3b82f6" 
+              strokeWidth={3}
+              dot={{ fill: '#3b82f6', r: 5 }}
+              activeDot={{ r: 7 }}
+              name="Sales (฿)"
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
+
+      <div className="grid gap-4 md:grid-cols-2">
+        <div className="card p-6">
+          <div className="font-bold text-lg mb-4 text-slate-800">🥧 Category Distribution</div>
+          <ResponsiveContainer width="100%" height={300}>
+            <PieChart>
+              <Pie
+                data={categoryData}
+                cx="50%"
+                cy="50%"
+                labelLine={false}
+                label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                outerRadius={100}
+                fill="#8884d8"
+                dataKey="value"
+              >
+                {categoryData.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                ))}
+              </Pie>
+              <Tooltip formatter={(value) => `฿${value.toLocaleString()}`} />
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
+        
+        <div className="card p-6">
+          <div className="font-bold text-lg mb-4 text-slate-800">📊 Top 5 Products by Stock Value</div>
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={topProductsData} layout="horizontal">
+              <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+              <XAxis type="number" stroke="#64748b" />
+              <YAxis dataKey="name" type="category" width={150} stroke="#64748b" />
+              <Tooltip 
+                contentStyle={{ backgroundColor: '#fff', border: '1px solid #e2e8f0', borderRadius: '8px' }}
+                formatter={(value) => `฿${value.toLocaleString()}`}
+              />
+              <Bar dataKey="value" fill="#8b5cf6" radius={[0, 8, 8, 0]} name="Value (฿)" />
+            </BarChart>
+          </ResponsiveContainer>
         </div>
       </div>
     </div>

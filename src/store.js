@@ -16,11 +16,23 @@ export const usePOSStore = create((set, get) => ({
   ordersToday: 0,
   revenueToday: 0,
 
+  // Sales History for charts
+  salesHistory: [
+    { day: 'Mon', sales: 4200 },
+    { day: 'Tue', sales: 5800 },
+    { day: 'Wed', sales: 3900 },
+    { day: 'Thu', sales: 6500 },
+    { day: 'Fri', sales: 7200 },
+    { day: 'Sat', sales: 9100 },
+    { day: 'Sun', sales: 8400 },
+  ],
+
+
   // Store Information
   storeInfo: {
     name: 'OXYFINE Meat & More',
-    address: '123 Sukhumvit Road, Bangkok 10110',
-    phone: '02-123-4567',
+    address: '975 อำเภอเมืองขอนแก่น ขอนแก่น 40000',
+    phone: '085-853-2006',
     email: 'info@oxyfine.com',
     taxId: '0123456789012'
   },
