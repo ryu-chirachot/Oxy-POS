@@ -5,10 +5,11 @@ export default function AdminReservations() {
   const [zoneFilter, setZoneFilter] = useState("ทั้งหมด");
 
   const [reservations, setReservations] = useState([
-    { id: "BK1001", name: "สมชาย", zone: "บาร์", table: "A1", people: 4, date: "12 ต.ค. 2568 18:30", status: "Pending", memberLevel: "Silver" },
-    { id: "BK1002", name: "Guest", zone: "ลานแคมป์ปิ้ง", table: "B2", people: 2, date: "12 ต.ค. 2568 19:00", status: "Confirmed", memberLevel: "Guest" },
-    { id: "BK1003", name: "อรุณ", zone: "ห้องส่วนตัว", table: "VIP1", people: 6, date: "13 ต.ค. 2568 17:00", status: "Pending", memberLevel: "Gold" },
-    { id: "BK1004", name: "ธนา", zone: "ร้านอาหาร", table: "C3", people: 3, date: "14 ต.ค. 2568 18:00", status: "Cancelled", memberLevel: "Platinum" },
+    { id: "BK1001", name: "สมชาย", zone: "บาร์", table: "3", people: 4, date: "12 ต.ค. 2568 18:30", status: "Pending", memberLevel: "Silver", phone: "081-234-5678" },
+    { id: "BK1005", name: "นานา", zone: "บาร์", table: "6", people: 2, date: "12 ต.ค. 2568 19:00", status: "Pending", memberLevel: "Silver", phone: "089-555-7788" },
+    { id: "BK1002", name: "จิต", zone: "ลานแคมป์ปิ้ง", table: "2", people: 2, date: "12 ต.ค. 2568 19:00", status: "Confirmed", memberLevel: "Platinum", phone: "086-777-9911" },
+    { id: "BK1003", name: "อรุณ", zone: "ลานแคมป์ปิ้ง", table: "5", people: 6, date: "13 ต.ค. 2568 17:00", status: "Pending", memberLevel: "Gold", phone: "080-123-9999" },
+    { id: "BK1004", name: "ธนา", zone: "ร้านอาหาร", table: "16", people: 3, date: "14 ต.ค. 2568 18:00", status: "Cancelled", memberLevel: "Platinum", phone: "082-456-1111" },
   ]);
 
   const updateStatus = (id, next) => {
@@ -44,9 +45,8 @@ export default function AdminReservations() {
         return "text-yellow-700 bg-yellow-100";
       case "Silver":
         return "text-gray-700 bg-gray-100";
-      case "Guest":
       default:
-        return "text-gray-700";
+        return "text-gray-700 bg-gray-100";
     }
   };
 
@@ -61,7 +61,7 @@ export default function AdminReservations() {
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="🔎 ค้นหา Booking ID / ชื่อ / โต๊ะ / โซน"
+            placeholder="🔎 ค้นหา Booking ID / ชื่อ "
             className="w-full border border-slate-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-600"
           />
         </div>
@@ -72,7 +72,7 @@ export default function AdminReservations() {
             onChange={(e) => setZoneFilter(e.target.value)}
             className="w-full border border-slate-300 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-green-600"
           >
-            {["ทั้งหมด", "บาร์", "ลานแคมป์ปิ้ง", "ร้านอาหาร", "ห้องส่วนตัว"].map((z) => (
+            {["ทั้งหมด", "บาร์", "ลานแคมป์ปิ้ง", "ร้านอาหาร"].map((z) => (
               <option key={z} value={z}>{z}</option>
             ))}
           </select>
@@ -97,19 +97,20 @@ export default function AdminReservations() {
                 <th className="text-left p-3">วันเวลา</th>
                 <th className="text-left p-3">ระดับสมาชิก</th>
                 <th className="text-left p-3">สถานะ</th>
+                <th className="text-left p-3">เบอร์ติดต่อ</th> 
                 <th className="text-right p-3">การจัดการ</th>
               </tr>
             </thead>
             <tbody>
               {filtered.length === 0 ? (
                 <tr>
-                  <td colSpan={9} className="text-center py-8 text-slate-400">
+                  <td colSpan={10} className="text-center py-8 text-slate-400">
                     ไม่พบข้อมูลที่ค้นหา
                   </td>
                 </tr>
               ) : (
                 filtered.map((r) => (
-                  <tr key={r.id} className="border-b hover:bg-slate-50">
+                  <tr key={r.id + r.table} className="border-b hover:bg-slate-50">
                     <td className="p-3 font-mono text-slate-700">{r.id}</td>
                     <td className="p-3">{r.name}</td>
                     <td className="p-3">{r.zone}</td>
@@ -130,11 +131,16 @@ export default function AdminReservations() {
                         {r.status}
                       </span>
                     </td>
+                    <td className="p-3 font-medium text-slate-700">
+                      <a className="text-black-600">
+                        {r.phone}
+                      </a>
+                    </td>
                     <td className="p-3 text-right">
                       <div className="flex gap-1 justify-end">
                         <button
                           onClick={() => updateStatus(r.id, "Confirmed")}
-                          className="btn text-xs px-3 bg-green-800 hover:bg-green-600 text-white border border-green-800 duration-200   "
+                          className="btn text-xs px-3 bg-green-800 hover:bg-green-600 text-white border border-green-800 duration-200"
                         >
                           Confirm
                         </button>

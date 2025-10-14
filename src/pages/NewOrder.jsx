@@ -48,10 +48,9 @@ export default function NewOrder() {
 
   // Zones
   const zones = {
-    "บาร์": ["A1", "A2", "A3"],
-    "ลานแคมป์ปิ้ง": ["B1", "B2", "B3"],
-    "ร้านอาหาร": ["C1", "C2", "C3"],
-    "ห้องส่วนตัว": ["VIP1", "VIP2"],
+    "บาร์": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"],
+    "ลานแคมป์ปิ้ง": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"],
+    "ร้านอาหาร": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20"],
   };
 
   // NEW: ออเดอร์ที่ฟิลเตอร์แล้ว
@@ -298,54 +297,72 @@ export default function NewOrder() {
         )}
       </div>
 
-      {/* ----------- Modal: Select Zone & Table ----------- */}
-      {showTableSelect && (
-        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="card p-6 w-full max-w-md shadow-2xl">
-            {!selectedZone ? (
-              <>
-                <div className="font-bold text-xl mb-4 text-slate-800">🏠 Select Zone</div>
-                <div className="grid grid-cols-2 gap-3 mb-6">
-                  {Object.keys(zones).map((z) => (
-                    <button
-                      key={z}
-                      onClick={() => setSelectedZone(z)}
-                      className="btn py-3 text-sm hover:bg-amber-50 hover:text-amber-600"
-                    >
-                      {z}
-                    </button>
-                  ))}
-                </div>
-                <button className="btn w-full" onClick={() => setShowTableSelect(false)}>
-                  Cancel
+        {/* ----------- Modal: Select Zone & Table ----------- */}
+          {showTableSelect && (
+            <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+              <div className="card p-6 w-full max-w-md shadow-2xl">
+                {!selectedZone ? (
+                  <>
+                    <div className="font-bold text-xl mb-4 text-slate-800 text-center">
+                      🏠 เลือกโซน
+                    </div>
+
+                    {/* 🔹 ปุ่มโซนขนาดเท่ากันเรียงแนวนอน */}
+                    <div className="grid grid-cols-3 gap-4 mb-10">
+                      {Object.keys(zones).map((z) => (
+                        <button
+                          key={z}
+                          onClick={() => setSelectedZone(z)}
+                          className={`flex flex-col items-center justify-center h-28 w-full rounded-2xl border-2 font-semibold text-lg transition-all duration-200 shadow-sm hover:shadow-md ${
+                            selectedZone === z
+                              ? "border-amber-500 bg-amber-100 text-amber-700 scale-105 shadow-md"
+                              : "border-slate-300 text-slate-700 hover:bg-amber-50 hover:text-amber-600 hover:border-amber-300"
+                          }`}
+                        >
+                          {z === "บาร์" && <div className="text-3xl mb-1">🍹</div>}
+                          {z === "ลานแคมป์ปิ้ง" && <div className="text-3xl mb-1">🏕️</div>}
+                          {z === "ร้านอาหาร" && <div className="text-3xl mb-1">🍽️</div>}
+                          <span className="truncate">{z}</span>
+                        </button>
+                      ))}
+                    </div>
+
+                <button
+                  className="btn w-full"
+                  onClick={() => setShowTableSelect(false)}
+                >
+                  ❌ Close
                 </button>
               </>
             ) : (
               <>
-                <div className="font-bold text-xl mb-4 text-slate-800">
-                  🪑 Select Table ({selectedZone})
+                <div className="font-bold text-xl mb-4 text-slate-800 text-center">
+                  เลือกโต๊ะในโซน {selectedZone}
                 </div>
-                <div className="grid grid-cols-3 gap-3 mb-6">
+
+                {/* 🔹 โต๊ะเรียงแถวละ 4 โต๊ะ */}
+                <div className="grid grid-cols-4 gap-3 mb-6 text-center">
                   {zones[selectedZone].map((t) => (
                     <button
                       key={t}
                       onClick={() => setSelectedTable(t)}
-                      className={`btn py-3 text-sm ${
+                      className={`flex items-center justify-center aspect-square rounded-xl border text-base font-medium transition-all duration-200 ${
                         selectedTable === t
-                          ? "border-amber-500 bg-amber-50 text-amber-600 font-semibold shadow-md"
-                          : ""
+                          ? "border-amber-500 bg-amber-100 text-amber-700 shadow-md scale-105"
+                          : "border-slate-300 text-slate-700 hover:bg-slate-50 hover:border-amber-300"
                       }`}
                     >
                       {t}
                     </button>
                   ))}
                 </div>
+
                 <div className="flex gap-3">
                   <button
                     className="btn flex-1"
                     onClick={() => setSelectedZone(null)}
                   >
-                    ← Back
+                    ← Cancel
                   </button>
                   <button
                     className="btn-gold flex-1"
@@ -359,6 +376,7 @@ export default function NewOrder() {
           </div>
         </div>
       )}
+
 
       {/* ----------- Modal: Payment ----------- */}
       {showPay && (
