@@ -10,6 +10,7 @@ import Settings from './pages/Settings'
 import AdminReservations from './pages/AdminReservations'
 import AdminDashboard from './components/AdminDashboard';
 import AIAnalytics from './components/AIAnalytics';
+import AdminReceiptHistory from './pages/AdminReceiptHistory'
 export default function App() {
   return (
     <div className="min-h-screen">
@@ -25,6 +26,7 @@ export default function App() {
             <Route path="/settings" element={<Settings />} />
             <Route path="/reservations" element={<AdminReservations />} />
               <Route path="/ai-analytics" element={<AIAnalytics />} />
+              <Route path="/receipt-history" element={<AdminReceiptHistory />} />
           </Routes>
         </main>
       </div>

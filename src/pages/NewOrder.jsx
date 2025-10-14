@@ -53,6 +53,17 @@ export default function NewOrder() {
     "ร้านอาหาร": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20"],
   };
 
+  // Coupon state
+  const [showCoupon, setShowCoupon] = useState(false);
+  const [selectedCoupon, setSelectedCoupon] = useState(null);
+
+  // ตัวอย่างคูปอง (สมมติจากหน้า Coupon)
+const coupons = [
+  { id: 1, title: "ลดราคาอาหาร 10%", code: "OXY12478", type: "percent", value: 10 },
+  { id: 2, title: "สมาชิกใหม่ส่วนลด 50 บาท", code: "NEW50", type: "amount", value: 50 },
+  { id: 3, title: "คูปองสะสมแต้มส่วนลด 20%", code: "LOYALTY20", type: "percent", value: 20 },
+];
+
   // NEW: ออเดอร์ที่ฟิลเตอร์แล้ว
   const ordersFiltered = useMemo(() => {
     return orders
@@ -103,95 +114,172 @@ export default function NewOrder() {
           </div>
         </div>
 
-        {/* Right: Cart */}
-        <div className="w-full md:w-96">
-          <div className="card p-5 sticky top-[90px]">
-            <div className="font-bold text-lg mb-3 text-slate-800">🧾 Current Order</div>
+       {/* Right: Cart */}
+<div className="w-full md:w-96">
+  <div className="card p-5 sticky top-[90px]">
+    <div className="font-bold text-lg mb-3 text-slate-800">🧾 Current Order</div>
 
-            {/* Selected Table */}
-            <div className="mb-4">
-              <div className="flex justify-between items-center">
-                <span className="text-slate-600 font-medium">🪑 Table</span>
-                <button
-                  onClick={() => setShowTableSelect(true)}
-                  className="btn text-sm px-3 py-1 border border-amber-400 text-amber-600 hover:bg-amber-50"
-                >
-                  {selectedTable ? `Change (${selectedZone} - ${selectedTable})` : "Select Table"}
-                </button>
-              </div>
+    {/* Selected Table */}
+    <div className="mb-4">
+      <div className="flex justify-between items-center">
+        <span className="text-slate-600 font-medium">🪑 Table</span>
+        <button
+          onClick={() => setShowTableSelect(true)}
+          className="btn text-sm px-3 py-1 border border-amber-400 text-amber-600 hover:bg-amber-50"
+        >
+          {selectedTable ? `${selectedZone} - โต๊ะ ${selectedTable}` : "Select Table"}
+        </button>
+      </div>
+    </div>
+
+    {/* Cart List */}
+    <div className="space-y-2 max-h-[50vh] overflow-auto pr-1">
+      {cart.length === 0 && (
+        <div className="text-slate-400 text-sm text-center py-8 bg-slate-50 rounded-xl">
+          No items yet. Start adding products! 🛍️
+        </div>
+      )}
+      {cart.map((c) => (
+        <div
+          key={c.id}
+          className="flex items-center justify-between gap-2 border-b border-slate-200 pb-3"
+        >
+          <div className="flex-1">
+            <div className="font-medium text-slate-800">{c.name}</div>
+            <div className="text-xs text-amber-600 font-semibold">
+              ฿{c.price.toLocaleString()} × {c.qty}
             </div>
-
-            {/* Cart List */}
-            <div className="space-y-2 max-h-[50vh] overflow-auto pr-1">
-              {cart.length === 0 && (
-                <div className="text-slate-400 text-sm text-center py-8 bg-slate-50 rounded-xl">
-                  No items yet. Start adding products! 🛍️
-                </div>
-              )}
-              {cart.map((c) => (
-                <div
-                  key={c.id}
-                  className="flex items-center justify-between gap-2 border-b border-slate-200 pb-3"
-                >
-                  <div className="flex-1">
-                    <div className="font-medium text-slate-800">{c.name}</div>
-                    <div className="text-xs text-amber-600 font-semibold">
-                      ฿{c.price.toLocaleString()} × {c.qty}
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => changeQty(c.id, c.qty - 1)}
-                      className="btn px-2 py-1 text-sm"
-                      disabled={c.qty <= 1}
-                    >
-                      −
-                    </button>
-                    <input
-                      type="number"
-                      min="1"
-                      value={c.qty}
-                      onChange={(e) => changeQty(c.id, parseInt(e.target.value) || 1)}
-                      className="input w-14 text-center py-1 text-sm"
-                    />
-                    <button
-                      onClick={() => changeQty(c.id, c.qty + 1)}
-                      className="btn px-2 py-1 text-sm"
-                    >
-                      +
-                    </button>
-                    <button
-                      onClick={() => removeFromCart(c.id)}
-                      className="btn px-2 py-1 text-sm text-red-600 hover:bg-red-50"
-                    >
-                      🗑️
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Summary */}
-            {cart.length > 0 && (
-              <div className="mt-4 pt-4 border-t-2 border-slate-300">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="text-slate-600 font-medium">Total</div>
-                  <div className="text-amber-600 text-2xl font-bold">฿{total.toLocaleString()}</div>
-                </div>
-                <button
-                  onClick={() => {
-                    if (!selectedTable)
-                      return alert("⚠️ กรุณาเลือกโซนและโต๊ะก่อนทำรายการชำระเงิน");
-                    setShowPay(true);
-                  }}
-                  className="btn-primary w-full text-lg py-3"
-                >
-                  💳 Confirm Payment
-                </button>
-              </div>
-            )}
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => changeQty(c.id, c.qty - 1)}
+              className="btn px-2 py-1 text-sm"
+              disabled={c.qty <= 1}
+            >
+              −
+            </button>
+            <input
+              type="number"
+              min="1"
+              value={c.qty}
+              onChange={(e) => changeQty(c.id, parseInt(e.target.value) || 1)}
+              className="input w-14 text-center py-1 text-sm"
+            />
+            <button
+              onClick={() => changeQty(c.id, c.qty + 1)}
+              className="btn px-2 py-1 text-sm"
+            >
+              +
+            </button>
+            <button
+              onClick={() => removeFromCart(c.id)}
+              className="btn px-2 py-1 text-sm text-red-600 hover:bg-red-50"
+            >
+              🗑️
+            </button>
           </div>
         </div>
+      ))}
+    </div>
+
+    {/* ✅ Coupon Button & Summary */}
+    {cart.length > 0 && (
+      <div className="mt-4 pt-4 border-t-2 border-slate-300 space-y-3">
+        {/* ปุ่มเลือกคูปอง */}
+        <div className="flex justify-between items-center">
+          <span className="text-slate-600 font-medium">🎟️ Coupon</span>
+          <button
+            onClick={() => setShowCoupon(true)}
+            className="btn text-sm px-3 py-1 border border-green-400 text-green-700 hover:bg-green-50"
+          >
+            {selectedCoupon ? selectedCoupon.title : "Select Coupon"}
+          </button>
+        </div>
+
+        {/* สรุปยอด */}
+        <div className="flex items-center justify-between">
+          <div className="text-slate-600 font-medium">Total</div>
+          <div className="text-amber-600 text-2xl font-bold">
+            ฿
+            {(
+              total -
+              (selectedCoupon?.type === "percent"
+                ? total * (selectedCoupon.value / 100)
+                : selectedCoupon?.type === "amount"
+                ? selectedCoupon.value
+                : 0)
+            ).toLocaleString()}
+          </div>
+        </div>
+
+        <button
+          onClick={() => {
+            if (!selectedTable)
+              return alert("⚠️ กรุณาเลือกโซนและโต๊ะก่อนทำรายการชำระเงิน");
+            setShowPay(true);
+          }}
+          className="btn-primary w-full text-lg py-3"
+        >
+          💳 Confirm Payment
+        </button>
+      </div>
+    )}
+  </div>
+</div>
+{/* ----------- Modal: Select Coupon ----------- */}
+{showCoupon && (
+  <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+    <div className="bg-gradient-to-br from-amber-50 to-white border-2 border-amber-200 rounded-2xl p-6 w-full max-w-md shadow-2xl">
+      <div className="font-bold text-2xl mb-4 text-amber-800 text-center">
+        🎟️ เลือกคูปองส่วนลด
+      </div>
+
+      <div className="space-y-3 mb-6 max-h-[55vh] overflow-y-auto px-1">
+        {coupons.map((c) => (
+          <button
+            key={c.id}
+            onClick={() => {
+              setSelectedCoupon(c);
+              setShowCoupon(false);
+            }}
+            className={`w-full text-left border-2 rounded-xl p-4 transition-all duration-200 ${
+              selectedCoupon?.id === c.id
+                ? "border-amber-500 bg-amber-100 shadow-md"
+                : "border-amber-200 bg-white hover:bg-amber-50 hover:shadow-sm"
+            }`}
+          >
+            <div className="font-semibold text-slate-800 text-lg">{c.title}</div>
+            <div className="text-sm text-slate-500 mt-1">
+              รหัสคูปอง: <span className="font-mono text-slate-700">{c.code}</span>
+            </div>
+            {c.type === "percent" && (
+              <div className="text-amber-700 text-sm font-semibold mt-2">
+                🔸 ลด {c.value}% จากยอดทั้งหมด
+              </div>
+            )}
+            {c.type === "amount" && (
+              <div className="text-amber-700 text-sm font-semibold mt-2">
+                🔸 ลด {c.value} บาท จากยอดทั้งหมด
+              </div>
+            )}
+            {c.type === "free" && (
+              <div className="text-amber-700 text-sm font-semibold mt-2">
+                🔸 🎂 ของหวานฟรี 1 รายการ
+              </div>
+            )}
+          </button>
+        ))}
+      </div>
+
+      <button
+        className="btn w-full border border-amber-400 text-amber-700 hover:bg-amber-50"
+        onClick={() => setShowCoupon(false)}
+      >
+        ❌ ปิดหน้าต่าง
+      </button>
+    </div>
+  </div>
+)}
       </div>
 
       {/* ----------- NEW: Orders Board (Today) ----------- */}
