@@ -8,6 +8,18 @@ const sampleItems = [
   { id: 's1', name: 'Cheesecake Slice', price: 129, category: 'Dessert', stock: 16, img: '🍰' },
 ]
 
+const genOrderNo = () => {
+  const n = Math.floor(100000 + Math.random() * 900000).toString()
+  return `ORD-${n}`
+}
+
+const TH_STATUS = {
+  queued: 'กำลังรอคิว',
+  preparing: 'กำลังทำ',
+  done: 'สำเร็จ',
+  cancelled: 'ยกเลิก',
+}
+
 export const usePOSStore = create((set, get) => ({
   // Product & Cart
   items: sampleItems,
@@ -15,6 +27,9 @@ export const usePOSStore = create((set, get) => ({
   cart: [],
   ordersToday: 0,
   revenueToday: 0,
+
+  // === NEW: Order list of today ===
+  orders: [], // { id, orderNo, zone, table, method, items[], total, status, createdAt, updatedAt }
 
   // Sales History for charts
   salesHistory: [
@@ -26,7 +41,6 @@ export const usePOSStore = create((set, get) => ({
     { day: 'Sat', sales: 9100 },
     { day: 'Sun', sales: 8400 },
   ],
-
 
   // Store Information
   storeInfo: {
@@ -52,9 +66,9 @@ export const usePOSStore = create((set, get) => ({
     serviceChargeEnabled: false,
     serviceChargeRate: 10,
     quickDiscounts: [
-      { name: 'Member 10%', percent: 10 },
-      { name: 'Senior 15%', percent: 15 },
-      { name: 'Staff 20%', percent: 20 },
+      { name: 'Silver', percent: 10 },
+      { name: 'Gold', percent: 15 },
+      { name: 'Platinum', percent: 20 },
     ]
   },
 
@@ -86,30 +100,55 @@ export const usePOSStore = create((set, get) => ({
 
   clearCart: () => set({ cart: [] }),
 
-  confirmPayment: (method='cash') => {
-    const total = get().cart.reduce((s, c) => s + c.price * c.qty, 0)
+  /**
+   * ✅ NEW: ยืนยันการชำระเงิน + สร้างออเดอร์เข้าสู่บอร์ดสถานะ
+   * params: { method, zone, table }
+   */
+  confirmPayment: ({ method = 'cash', zone = '-', table = '-' } = {}) => {
+    const cartSnapshot = JSON.parse(JSON.stringify(get().cart))
+    const total = cartSnapshot.reduce((s, c) => s + c.price * c.qty, 0)
+
+    // อัปเดตสต็อก
     const items = get().items.map(i => {
-      const inCart = get().cart.find(c => c.id === i.id)
+      const inCart = cartSnapshot.find(c => c.id === i.id)
       if (!inCart) return i
       return { ...i, stock: Math.max(0, i.stock - inCart.qty) }
     })
+
+    const nowIso = new Date().toISOString()
+    const order = {
+      id: crypto.randomUUID(),
+      orderNo: genOrderNo(),
+      zone,
+      table,
+      method,
+      items: cartSnapshot, // [{id,name,price,qty,...}]
+      total,
+      status: 'queued', // เริ่มต้น = รอคิว
+      createdAt: nowIso,
+      updatedAt: nowIso,
+    }
+
     set({
       items,
       cart: [],
       revenueToday: get().revenueToday + total,
-      ordersToday: get().ordersToday + 1
+      ordersToday: get().ordersToday + 1,
+      orders: [order, ...get().orders] // push ด้านหน้าเพื่อให้รายการใหม่อยู่บนสุด
     })
-    return { total, method, time: new Date().toISOString() }
+
+    return order
   },
 
-  updateStock: (id, newQty) => {
+  // === NEW: เปลี่ยนสถานะออเดอร์ (queued|preparing|done|cancelled)
+  updateOrderStatus: (orderId, nextStatus) => {
+    const valid = ['queued', 'preparing', 'done', 'cancelled']
+    if (!valid.includes(nextStatus)) return
     set({
-      items: get().items.map(i => i.id === id ? { ...i, stock: Math.max(0, parseInt(newQty)||0) } : i)
+      orders: get().orders.map(o =>
+        o.id === orderId ? { ...o, status: nextStatus, updatedAt: new Date().toISOString() } : o
+      )
     })
-  },
-
-  addProduct: (prod) => {
-    set({ items: [...get().items, { ...prod, id: crypto.randomUUID() }] })
   },
 
   // === Store Info Actions ===
