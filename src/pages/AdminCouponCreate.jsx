@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Gift, Save, Calendar, Percent } from "lucide-react";
+import { Gift, Save, Calendar, Trash2 } from "lucide-react";
 
 export default function CreateCouponPage() {
   const [form, setForm] = useState({
@@ -12,6 +12,29 @@ export default function CreateCouponPage() {
     conditionValue: "",
   });
 
+  // ✅ เก็บรายการคูปองทั้งหมด
+  const [coupons, setCoupons] = useState([
+    {
+      id: 1,
+      title: "ส่วนลดสมาชิกใหม่ 10%",
+      code: "NEW10",
+      type: "percent",
+      value: 10,
+      expiry: "2025-12-31",
+      condition: "none",
+    },
+    {
+      id: 2,
+      title: "สะสมแต้มครบ 200 ลด 50 บาท",
+      code: "POINT200",
+      type: "amount",
+      value: 50,
+      expiry: "2025-12-31",
+      condition: "points",
+      conditionValue: 200,
+    },
+  ]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
@@ -20,11 +43,18 @@ export default function CreateCouponPage() {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!form.title || !form.code || !form.value) {
-      alert("กรุณากรอกข้อมูลให้ครบถ้วน");
+      alert("⚠️ กรุณากรอกข้อมูลให้ครบถ้วน");
       return;
     }
-    console.log("✅ Coupon Created:", form);
+
+    const newCoupon = {
+      ...form,
+      id: Date.now(),
+    };
+
+    setCoupons((prev) => [...prev, newCoupon]);
     alert(`🎁 สร้างคูปองใหม่สำเร็จ!\n\nชื่อ: ${form.title}\nโค้ด: ${form.code}`);
+
     setForm({
       title: "",
       code: "",
@@ -36,13 +66,21 @@ export default function CreateCouponPage() {
     });
   };
 
+  // ✅ ฟังก์ชันลบคูปอง
+  const deleteCoupon = (id) => {
+    if (window.confirm("❌ ต้องการลบคูปองนี้หรือไม่?")) {
+      setCoupons((prev) => prev.filter((c) => c.id !== id));
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 to-white flex items-center justify-center p-6">
-      <div className="bg-white w-full max-w-lg rounded-3xl shadow-2xl border border-amber-200 p-8">
+    <div className="min-h-screen bg-gradient-to-br from-amber-50 to-white flex flex-col items-center justify-start p-6">
+      <div className="bg-white w-full max-w-lg rounded-3xl shadow-2xl border border-amber-200 p-8 mb-10">
         <h1 className="text-3xl font-bold text-amber-700 mb-6 flex items-center gap-2 justify-center">
           <Gift size={32} /> สร้างคูปองใหม่
         </h1>
 
+        {/* ฟอร์มสร้างคูปอง */}
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* ชื่อคูปอง */}
           <div>
@@ -123,7 +161,7 @@ export default function CreateCouponPage() {
             </div>
           </div>
 
-          {/* เงื่อนไขการแจกคูปอง */}
+          {/* เงื่อนไขการได้รับคูปอง */}
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1">
               เงื่อนไขการได้รับคูปอง
@@ -168,6 +206,61 @@ export default function CreateCouponPage() {
             <Save size={18} /> บันทึกคูปอง
           </button>
         </form>
+      </div>
+
+      {/* 🧾 แสดงคูปองที่มีอยู่ */}
+      <div className="bg-white w-full max-w-3xl rounded-3xl shadow-xl border border-amber-200 p-6">
+        <h2 className="text-2xl font-bold text-slate-800 mb-4">
+          🎟️ คูปองที่มีอยู่ ({coupons.length})
+        </h2>
+
+        {coupons.length === 0 ? (
+          <div className="text-center text-slate-400 py-10">
+            ยังไม่มีคูปองในระบบ 😅
+          </div>
+        ) : (
+          <div className="grid md:grid-cols-2 gap-4">
+            {coupons.map((c) => (
+              <div
+                key={c.id}
+                className="border-2 border-amber-200 rounded-xl p-4 bg-gradient-to-br from-amber-50 to-white hover:shadow-md transition relative"
+              >
+                <div className="font-semibold text-lg text-amber-700">
+                  {c.title}
+                </div>
+                <div className="text-sm text-slate-600">
+                  รหัส: <span className="font-mono">{c.code}</span>
+                </div>
+                <div className="text-sm text-slate-600">
+                  ส่วนลด:{" "}
+                  {c.type === "percent"
+                    ? `${c.value}%`
+                    : `${c.value.toLocaleString()} บาท`}
+                </div>
+                <div className="text-sm text-slate-600">
+                  เงื่อนไข:{" "}
+                  {c.condition === "none"
+                    ? "แจกทั่วไป"
+                    : c.condition === "points"
+                    ? `สะสมครบ ${c.conditionValue} แต้ม`
+                    : c.condition === "spending"
+                    ? `ยอดซื้อถึง ${c.conditionValue} บาท`
+                    : "วันเกิดลูกค้า"}
+                </div>
+                <div className="text-sm text-slate-500">
+                  วันหมดอายุ: {c.expiry || "ไม่ระบุ"}
+                </div>
+
+                <button
+                  onClick={() => deleteCoupon(c.id)}
+                  className="absolute top-3 right-3 text-red-500 hover:text-red-700 transition"
+                >
+                  <Trash2 size={18} />
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
