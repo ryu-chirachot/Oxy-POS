@@ -16,57 +16,57 @@ export default function AdminReceiptHistory() {
   const [showModal, setShowModal] = useState(false);
   const [selectedReceipt, setSelectedReceipt] = useState(null);
 
-  const [receipts] = useState([
-    {
-      id: "RC1001",
-      orderId: "ORD1001",
-      customer: "สมชาย",
-      zone: "บาร์",
-      table: "3",
-      total: 480,
-      method: "เงินสด",
-      date: "12 ต.ค. 2568 18:45",
-      coupon: null, // ❌ ไม่มีคูปอง
-      items: [
-        { name: "เบียร์ลีโอ", qty: 2, price: 80 },
-        { name: "มันฝรั่งทอด", qty: 1, price: 120 },
-        { name: "น้ำแข็ง", qty: 1, price: 50 },
-      ],
-    },
-    {
-      id: "RC1002",
-      orderId: "ORD1002",
-      customer: "จิต",
-      zone: "ลานแคมป์ปิ้ง",
-      table: "2",
-      total: 920,
-      method: "QR Code",
-      date: "12 ต.ค. 2568 19:15",
-      coupon: { code: "OXY12478", discountPercent: 10 },
-      items: [
-        { name: "หมูกระทะ", qty: 2, price: 350 },
-        { name: "โค้กขวด", qty: 2, price: 80 },
-        { name: "น้ำแข็ง", qty: 1, price: 60 },
-      ],
-    },
-    {
-      id: "RC1003",
-      orderId: "ORD1003",
-      customer: "อรุณ",
-      zone: "ร้านอาหาร",
-      table: "16",
-      total: 1250,
-      method: "บัตรเครดิต",
-      date: "13 ต.ค. 2568 20:00",
-      coupon: { code: "NEW50", discountAmount: 50 },
-      items: [
-        { name: "ปลากระพงทอดน้ำปลา", qty: 1, price: 450 },
-        { name: "ต้มยำรวมมิตร", qty: 1, price: 300 },
-        { name: "ข้าวสวย", qty: 2, price: 50 },
-        { name: "ชาเย็น", qty: 2, price: 100 },
-      ],
-    },
-  ]);
+const [receipts] = useState([
+  {
+    id: "RC1001",
+    orderId: "ORD1001",
+    customer: "นานา",
+    zone: "บาร์",
+    table: "3",
+    total: 480,
+    method: "Cash",
+    date: "1 ตุลาคม, 2568 18:45",
+    coupon: null,
+    items: [
+      { name: "Leo Beer", qty: 2, price: 80 },
+      { name: "French Fries", qty: 1, price: 120 },
+      { name: "Ice Bucket", qty: 1, price: 50 },
+    ],
+  },
+  {
+    id: "RC1002",
+    orderId: "ORD1002",
+    customer: "จิต",
+    zone: "ลานแคมป์ปิ้ง",
+    table: "2",
+    total: 920,
+    method: "QR Code",
+    date: "1 ตุลาคม, 2568 19:15",
+    coupon: { code: "OXY12478", discountPercent: 10 },
+    items: [
+      { name: "Wagyu A5 Striploin", qty: 1, price: 700 },
+      { name: "Coke Bottle", qty: 2, price: 80 },
+      { name: "Ice Cube", qty: 1, price: 60 },
+    ],
+  },
+  {
+    id: "RC1003",
+    orderId: "ORD1003",
+    customer: "ตัง",
+    zone: "ร้านอาหาร",
+    table: "16",
+    total: 1250,
+    method: "Credit Card",
+    date: "1 ตุลาคม, 2568 20:00",
+    coupon: { code: "NEW50", discountAmount: 50 },
+    items: [
+      { name: "Fried Seabass with Fish Sauce", qty: 1, price: 450 },
+      { name: "Tom Yum Seafood", qty: 1, price: 300 },
+      { name: "Steamed Rice", qty: 2, price: 50 },
+      { name: "Thai Iced Tea", qty: 2, price: 100 },
+    ],
+  },
+]);
 
   const filtered = receipts.filter((r) => {
     const text = search.toLowerCase();
@@ -81,18 +81,6 @@ export default function AdminReceiptHistory() {
     return matchSearch && matchMethod;
   });
 
-  const getPaymentIcon = (method) => {
-    switch (method) {
-      case "เงินสด":
-        return <Wallet className="inline mr-1 text-green-600" size={16} />;
-      case "QR Code":
-        return <QrCode className="inline mr-1 text-blue-600" size={16} />;
-      case "บัตรเครดิต":
-        return <CreditCard className="inline mr-1 text-purple-600" size={16} />;
-      default:
-        return <FileText className="inline mr-1 text-gray-600" size={16} />;
-    }
-  };
 
   const openReceipt = (r) => {
     setSelectedReceipt(r);
@@ -134,7 +122,7 @@ export default function AdminReceiptHistory() {
             onChange={(e) => setFilterMethod(e.target.value)}
             className="w-full border border-slate-300 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-amber-500"
           >
-            {["ทั้งหมด", "เงินสด", "QR Code", "บัตรเครดิต"].map((m) => (
+            {["ทั้งหมด", "Cash", "QR Code", "Credit Card"].map((m) => (
               <option key={m} value={m}>
                 {m}
               </option>
@@ -192,7 +180,6 @@ export default function AdminReceiptHistory() {
                         </td>
 
                     <td className="p-3">
-                      {getPaymentIcon(r.method)}
                       {r.method}
                     </td>
                     <td className="p-3 whitespace-nowrap">{r.date}</td>

@@ -11,6 +11,7 @@ import AdminReservations from './pages/AdminReservations'
 import AdminDashboard from './components/AdminDashboard';
 import AIAnalytics from './components/AIAnalytics';
 import AdminReceiptHistory from './pages/AdminReceiptHistory'
+import AdminCouponCreate from './pages/AdminCouponCreate'
 export default function App() {
   return (
     <div className="min-h-screen">
@@ -27,6 +28,7 @@ export default function App() {
             <Route path="/reservations" element={<AdminReservations />} />
               <Route path="/ai-analytics" element={<AIAnalytics />} />
               <Route path="/receipt-history" element={<AdminReceiptHistory />} />
+              <Route path="/create-coupon" element={<AdminCouponCreate />} />
           </Routes>
         </main>
       </div>

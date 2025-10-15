@@ -47,11 +47,13 @@ export default function NewOrder() {
   const total = cart.reduce((s, c) => s + c.price * c.qty, 0);
 
   // Zones
-  const zones = {
-    "บาร์": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"],
-    "ลานแคมป์ปิ้ง": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"],
-    "ร้านอาหาร": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20"],
-  };
+const zones = {
+  "บาร์": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"],
+  "ลานแคมป์ปิ้ง": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"],
+  "ร้านอาหาร": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20"],
+};
+
+
 
   // Coupon state
   const [showCoupon, setShowCoupon] = useState(false);
@@ -122,12 +124,15 @@ const coupons = [
     {/* Selected Table */}
     <div className="mb-4">
       <div className="flex justify-between items-center">
-        <span className="text-slate-600 font-medium">🪑 Table</span>
+        <span className="text-slate-600 font-medium">Type</span>
         <button
           onClick={() => setShowTableSelect(true)}
           className="btn text-sm px-3 py-1 border border-amber-400 text-amber-600 hover:bg-amber-50"
         >
-          {selectedTable ? `${selectedZone} - โต๊ะ ${selectedTable}` : "Select Table"}
+          {selectedTable
+  ? `${selectedZone} - โต๊ะ ${selectedTable}`
+  : "Select Table"}
+
         </button>
       </div>
     </div>
@@ -329,8 +334,11 @@ const coupons = [
                   <StatusBadge status={o.status} />
                 </div>
                 <div className="text-sm text-slate-500 mt-1">
-                  โซน: <span className="font-medium text-slate-700">{o.zone}</span> • โต๊ะ: <span className="font-medium text-slate-700">{o.table}</span>
-                </div>
+  {o.zone === "เดลิเวอรี่"
+    ? "🚚 เดลิเวอรี่"
+    : <>โซน: <span className="font-medium text-slate-700">{o.zone}</span> • โต๊ะ: <span className="font-medium text-slate-700">{o.table}</span></>}
+</div>
+
                 <div className="text-xs text-slate-400 mt-1">
                   {new Date(o.createdAt).toLocaleString()}
                 </div>
@@ -386,84 +394,122 @@ const coupons = [
       </div>
 
         {/* ----------- Modal: Select Zone & Table ----------- */}
-          {showTableSelect && (
-            <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-              <div className="card p-6 w-full max-w-md shadow-2xl">
-                {!selectedZone ? (
-                  <>
-                    <div className="font-bold text-xl mb-4 text-slate-800 text-center">
-                      🏠 เลือกโซน
-                    </div>
+          {/* ----------- Modal: Select Zone & Table ----------- */}
+{showTableSelect && (
+  <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+    <div className="card p-6 w-full max-w-md shadow-2xl">
+      {/* ✅ Step 1: เลือกโซน */}
+      {!selectedZone ? (
+        <>
+          <div className="font-bold text-xl mb-4 text-slate-800 text-center">
+            เลือกประเภท
+          </div>
 
-                    {/* 🔹 ปุ่มโซนขนาดเท่ากันเรียงแนวนอน */}
-                    <div className="grid grid-cols-3 gap-4 mb-10">
-                      {Object.keys(zones).map((z) => (
-                        <button
-                          key={z}
-                          onClick={() => setSelectedZone(z)}
-                          className={`flex flex-col items-center justify-center h-28 w-full rounded-2xl border-2 font-semibold text-lg transition-all duration-200 shadow-sm hover:shadow-md ${
-                            selectedZone === z
-                              ? "border-amber-500 bg-amber-100 text-amber-700 scale-105 shadow-md"
-                              : "border-slate-300 text-slate-700 hover:bg-amber-50 hover:text-amber-600 hover:border-amber-300"
-                          }`}
-                        >
-                          {z === "บาร์" && <div className="text-3xl mb-1">🍹</div>}
-                          {z === "ลานแคมป์ปิ้ง" && <div className="text-3xl mb-1">🏕️</div>}
-                          {z === "ร้านอาหาร" && <div className="text-3xl mb-1">🍽️</div>}
-                          <span className="truncate">{z}</span>
-                        </button>
-                      ))}
-                    </div>
+          {/* 🔹 ปุ่มโซน (เพิ่มเดลิเวอรี่) */}
+         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-10">
+  {[
+    { name: "บาร์", icon: "🍹" },
+    { name: "ลานแคมป์ปิ้ง", icon: "🏕️" },
+    { name: "ร้านอาหาร", icon: "🍽️" },
+  ].map((z) => (
+    <button
+      key={z.name}
+      onClick={() => setSelectedZone(z.name)}
+      className={`flex flex-col items-center justify-center h-28 w-full rounded-2xl border-2 font-semibold text-lg transition-all duration-200 shadow-sm hover:shadow-md ${
+        selectedZone === z.name
+          ? "border-amber-500 bg-amber-100 text-amber-700 scale-105 shadow-md"
+          : "border-slate-300 text-slate-700 hover:bg-amber-50 hover:text-amber-600 hover:border-amber-300"
+      }`}
+    >
+      <div className="text-3xl mb-1">{z.icon}</div>
+      <span className="truncate">{z.name}</span>
+    </button>
+  ))}
+</div>
 
+          <button
+            className="btn w-full"
+            onClick={() => setShowTableSelect(false)}
+          >
+            ❌ Close
+          </button>
+        </>
+      ) : (
+        <>
+          {/* ✅ Step 2: ถ้าเลือก “เดลิเวอรี่” */}
+          {selectedZone === "เดลิเวอรี่" ? (
+            <div className="text-center">
+              <div className="font-bold text-xl mb-4 text-slate-800">
+                🚚 ออเดอร์นี้เป็นแบบเดลิเวอรี่
+              </div>
+              <p className="text-slate-600 mb-6">
+                ไม่จำเป็นต้องเลือกโต๊ะ ระบบจะบันทึกเป็นออเดอร์เดลิเวอรี่โดยอัตโนมัติ
+              </p>
+
+              <div className="flex gap-3 justify-center">
                 <button
-                  className="btn w-full"
+                  className="btn flex-1"
+                  onClick={() => setSelectedZone(null)}
+                >
+                  ← Back
+                </button>
+                <button
+                  className="btn-gold flex-1"
+                  onClick={() => {
+                    setSelectedTable("Delivery");
+                    setShowTableSelect(false);
+                  }}
+                >
+                  ✓ Confirm
+                </button>
+              </div>
+            </div>
+          ) : (
+            <>
+              {/* ✅ Step 2: ถ้าเป็นโซนปกติ */}
+              <div className="font-bold text-xl mb-4 text-slate-800 text-center">
+                เลือกโต๊ะในโซน {selectedZone}
+              </div>
+
+              {/* 🔹 โต๊ะเรียงแถวละ 4 โต๊ะ */}
+              <div className="grid grid-cols-4 gap-3 mb-6 text-center">
+                {zones[selectedZone].map((t) => (
+                  <button
+                    key={t}
+                    onClick={() => setSelectedTable(t)}
+                    className={`flex items-center justify-center aspect-square rounded-xl border text-base font-medium transition-all duration-200 ${
+                      selectedTable === t
+                        ? "border-amber-500 bg-amber-100 text-amber-700 shadow-md scale-105"
+                        : "border-slate-300 text-slate-700 hover:bg-slate-50 hover:border-amber-300"
+                    }`}
+                  >
+                    {t}
+                  </button>
+                ))}
+              </div>
+
+              <div className="flex gap-3">
+                <button
+                  className="btn flex-1"
+                  onClick={() => setSelectedZone(null)}
+                >
+                  ← Cancel
+                </button>
+                <button
+                  className="btn-gold flex-1"
                   onClick={() => setShowTableSelect(false)}
                 >
-                  ❌ Close
+                  ✓ Confirm
                 </button>
-              </>
-            ) : (
-              <>
-                <div className="font-bold text-xl mb-4 text-slate-800 text-center">
-                  เลือกโต๊ะในโซน {selectedZone}
-                </div>
-
-                {/* 🔹 โต๊ะเรียงแถวละ 4 โต๊ะ */}
-                <div className="grid grid-cols-4 gap-3 mb-6 text-center">
-                  {zones[selectedZone].map((t) => (
-                    <button
-                      key={t}
-                      onClick={() => setSelectedTable(t)}
-                      className={`flex items-center justify-center aspect-square rounded-xl border text-base font-medium transition-all duration-200 ${
-                        selectedTable === t
-                          ? "border-amber-500 bg-amber-100 text-amber-700 shadow-md scale-105"
-                          : "border-slate-300 text-slate-700 hover:bg-slate-50 hover:border-amber-300"
-                      }`}
-                    >
-                      {t}
-                    </button>
-                  ))}
-                </div>
-
-                <div className="flex gap-3">
-                  <button
-                    className="btn flex-1"
-                    onClick={() => setSelectedZone(null)}
-                  >
-                    ← Cancel
-                  </button>
-                  <button
-                    className="btn-gold flex-1"
-                    onClick={() => setShowTableSelect(false)}
-                  >
-                    ✓ Confirm
-                  </button>
-                </div>
-              </>
-            )}
-          </div>
-        </div>
+              </div>
+            </>
+          )}
+        </>
       )}
+    </div>
+  </div>
+)}
+
 
 
       {/* ----------- Modal: Payment ----------- */}
@@ -473,17 +519,20 @@ const coupons = [
             <div className="font-bold text-xl mb-4 text-slate-800">💳 Payment Method</div>
             <div className="mb-4 p-4 bg-slate-50 rounded-xl">
               <div className="flex justify-between items-center">
-                <span className="text-slate-600">Zone</span>
+                <span className="text-slate-600">Type</span>
                 <span className="font-semibold text-slate-700">
                   {selectedZone || "-"}
                 </span>
               </div>
-              <div className="flex justify-between items-center mt-1">
-                <span className="text-slate-600">Table</span>
-                <span className="font-semibold text-slate-700">
-                  {selectedTable || "-"}
-                </span>
-              </div>
+              
+  <div className="flex justify-between items-center mt-1">
+    <span className="text-slate-600">Table</span>
+    <span className="font-semibold text-slate-700">
+      {selectedTable || "-"}
+    </span>
+  </div>
+
+
               <div className="flex justify-between items-center mt-2">
                 <span className="text-slate-600">Total Amount</span>
                 <span className="text-2xl font-bold text-amber-600">

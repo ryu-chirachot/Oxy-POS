@@ -20,6 +20,7 @@ export default function SideNav() {
       <Item to="/ai-analytics" label="✨Ai Analytics" />
       <Item to="/reservations" label="🍽️ Table Reservations" />
       <Item to="/receipt-history" label="🧾 Receipt History" />
+      <Item to="/create-coupon" label="🎟️ Create Coupon" />
       <Item to="/settings" label="⚙️ Settings" />
     </aside>
   )
