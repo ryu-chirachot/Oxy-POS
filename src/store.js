@@ -176,4 +176,55 @@ export const usePOSStore = create((set, get) => ({
 
   // === Receipt Settings Actions ===
   updateReceiptSettings: (settings) => set({ receiptSettings: settings }),
+
+  // === Auth & User State ===
+  user: (() => {
+    try {
+      const saved = localStorage.getItem('oxypos_user')
+      return saved ? JSON.parse(saved) : null
+    } catch {
+      return null
+    }
+  })(),
+
+  login: (userData) => {
+    try {
+      localStorage.setItem('oxypos_user', JSON.stringify(userData))
+    } catch (e) {
+      console.error(e)
+    }
+    set({ user: userData })
+  },
+
+  logout: () => {
+    try {
+      localStorage.removeItem('oxypos_user')
+    } catch (e) {
+      console.error(e)
+    }
+    set({ user: null })
+  },
 }))
+
+export const DEMO_USERS = [
+  {
+    id: 'u-admin',
+    name: 'Chirachot R.',
+    email: 'admin@oxyfine.com',
+    password: 'password123',
+    pin: '1234',
+    role: 'Admin',
+    roleTitle: 'ผู้จัดการร้าน (Manager)',
+    avatar: '👨‍💼',
+  },
+  {
+    id: 'u-cashier',
+    name: 'Somchai Prasert',
+    email: 'cashier@oxyfine.com',
+    password: 'password123',
+    pin: '5678',
+    role: 'Cashier',
+    roleTitle: 'พนักงานขาย (Cashier)',
+    avatar: '🧑‍🍳',
+  },
+]
